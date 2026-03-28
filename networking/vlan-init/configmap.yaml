@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vlan-init-config
+  namespace: kube-system
+  labels:
+    app: vlan-init
+    nephio.org/cluster-name: ran # kpt-set: ${cluster-name}
+data:
+  master-interface: ens3 # kpt-set: ${master-interface}
+  vlan-range: "2 3 4 5 6 7 8 9 10" # kpt-set: ${vlan-range}

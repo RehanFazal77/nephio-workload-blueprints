@@ -1,0 +1,96 @@
+# VLAN Initialization DaemonSet
+# Creates VLAN subinterfaces on the master interface for macvlan CNI
+# The master-interface and vlan-range are injected via kpt apply-setters
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vlan-init
+  namespace: kube-system
+  labels:
+    app: vlan-init
+    nephio.org/cluster-name: ran # kpt-set: ${cluster-name}
+spec:
+  selector:
+    matchLabels:
+      app: vlan-init
+  template:
+    metadata:
+      labels:
+        app: vlan-init
+    spec:
+      hostNetwork: true
+      hostPID: true
+      tolerations:
+      - operator: Exists
+      initContainers:
+      - name: vlan-setup
+        image: alpine:3.19
+        securityContext:
+          privileged: true
+        env:
+        - name: MASTER_IF
+          valueFrom:
+            configMapKeyRef:
+              name: vlan-init-config
+              key: master-interface
+        - name: VLAN_RANGE
+          valueFrom:
+            configMapKeyRef:
+              name: vlan-init-config
+              key: vlan-range
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "=== VLAN Init: Creating VLANs on ${MASTER_IF} ==="
+
+          # Load 8021q kernel module
+          modprobe 8021q || echo "8021q already loaded or not available"
+
+          # Create VLAN subinterfaces
+          for VID in $VLAN_RANGE; do
+            VLAN_IF="${MASTER_IF}.${VID}"
+            if ! ip link show "$VLAN_IF" 2>/dev/null; then
+              ip link add link "$MASTER_IF" name "$VLAN_IF" type vlan id "$VID"
+              echo "Created $VLAN_IF"
+            else
+              echo "$VLAN_IF already exists"
+            fi
+            ip link set "$VLAN_IF" up
+          done
+
+          echo "=== VLAN Init: All VLANs ready ==="
+          ip link show | grep "$MASTER_IF"
+      containers:
+      - name: vlan-monitor
+        image: alpine:3.19
+        securityContext:
+          privileged: true
+        env:
+        - name: MASTER_IF
+          valueFrom:
+            configMapKeyRef:
+              name: vlan-init-config
+              key: master-interface
+        - name: VLAN_RANGE
+          valueFrom:
+            configMapKeyRef:
+              name: vlan-init-config
+              key: vlan-range
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "VLAN monitor running for ${MASTER_IF}"
+          while true; do
+            for VID in $VLAN_RANGE; do
+              VLAN_IF="${MASTER_IF}.${VID}"
+              if ! ip link show "$VLAN_IF" 2>/dev/null; then
+                ip link add link "$MASTER_IF" name "$VLAN_IF" type vlan id "$VID"
+                ip link set "$VLAN_IF" up
+                echo "Recreated $VLAN_IF"
+              fi
+            done
+            sleep 60
+          done

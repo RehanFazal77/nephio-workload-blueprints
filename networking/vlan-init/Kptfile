@@ -1,0 +1,26 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: vlan-init
+  annotations:
+    config.kubernetes.io/local-config: "true"
+info:
+  description: |
+    VLAN initialization DaemonSet for Nephio workload clusters.
+    Creates VLAN subinterfaces on the master interface so that
+    macvlan CNI can attach pods to them. This must be deployed
+    BEFORE any NF workloads (OAI-RAN, SD-Core).
+  keywords:
+    - nephio
+    - vlan
+    - networking
+    - macvlan
+  site: https://nephio.org
+
+pipeline:
+  mutators:
+    - image: ghcr.io/kptdev/krm-functions-catalog/apply-setters:v0.2
+      configMap:
+        master-interface: ens3
+        vlan-range: "2 3 4 5 6 7 8 9 10"
+        cluster-name: ran
