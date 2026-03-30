@@ -20,3 +20,5 @@ pipeline:
   - image: docker.io/nephio/nad-fn:latest
   - image: docker.io/nephio/interface-fn:latest
   - image: docker.io/nephio/nfdeploy-fn:latest
+  - image: ghcr.io/kptdev/krm-functions-catalog/apply-replacements:v0.1.1
+    configPath: apply-replacements-master-interface.yaml
