@@ -31,10 +31,3 @@ replacements:
     options:
       delimiter: '-'
       index: 1
-  - select:
-      kind: Config
-    fieldPaths:
-    - metadata.name
-    options:
-      delimiter: '-'
-      index: 1
