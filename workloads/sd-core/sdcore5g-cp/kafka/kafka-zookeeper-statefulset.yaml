@@ -55,7 +55,7 @@ spec:
       initContainers:
       containers:
         - name: zookeeper
-          image: docker.io/bitnami/zookeeper:3.8.0-debian-11-r74
+          image: docker.io/bitnamilegacy/zookeeper:3.8.0-debian-11-r74
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false

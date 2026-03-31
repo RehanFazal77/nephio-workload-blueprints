@@ -55,7 +55,7 @@ spec:
       serviceAccountName: kafka
       containers:
         - name: kafka
-          image: docker.io/bitnami/kafka:3.3.1-debian-11-r34
+          image: docker.io/bitnamilegacy/kafka:3.3.1-debian-11-r34
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
