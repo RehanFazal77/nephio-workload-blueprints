@@ -21,5 +21,5 @@ pipeline:
     - image: docker.io/nephio/dnn-fn:v4.0.0
     - image: docker.io/nephio/interface-fn:v4.0.0
     - image: docker.io/nephio/nfdeploy-fn:v4.0.0
-    - image: ghcr.io/kptdev/krm-functions-catalog/apply-replacements:v0.1.1
-      configPath: apply-replacements-master-interface.yaml
+    - image: docker.io/rehanfazal47/nad-master-fn:v1.0
+      configPath: interface-setters.yaml
