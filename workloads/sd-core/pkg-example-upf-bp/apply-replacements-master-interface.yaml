@@ -1,4 +1,6 @@
 # Replaces the "master" field in each UPF NAD's spec.config
+# NAD names follow pattern: upf-<cluster>-<interface>
+# If cluster name changes from "core", update the names below
 apiVersion: fn.kpt.dev/v1alpha1
 kind: ApplyReplacements
 metadata:
@@ -15,8 +17,7 @@ replacements:
     targets:
       - select:
           kind: NetworkAttachmentDefinition
-          annotations:
-            specializer.nephio.org/owner: req.nephio.org/v1alpha1.Interface.n3
+          name: upf-core-n3
         fieldPaths:
           - spec.config
         options:
@@ -31,8 +32,7 @@ replacements:
     targets:
       - select:
           kind: NetworkAttachmentDefinition
-          annotations:
-            specializer.nephio.org/owner: req.nephio.org/v1alpha1.Interface.n4
+          name: upf-core-n4
         fieldPaths:
           - spec.config
         options:
@@ -47,10 +47,10 @@ replacements:
     targets:
       - select:
           kind: NetworkAttachmentDefinition
-          annotations:
-            specializer.nephio.org/owner: req.nephio.org/v1alpha1.Interface.n6
+          name: upf-core-n6
         fieldPaths:
           - spec.config
         options:
           delimiter: '"master":"'
           index: 1
+

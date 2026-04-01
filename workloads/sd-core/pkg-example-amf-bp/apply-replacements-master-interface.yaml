@@ -1,4 +1,6 @@
 # Replaces the "master" field in AMF NAD's spec.config
+# NAD name follows pattern: amf-<cluster>-<interface>
+# If cluster name changes from "core", update the name below
 apiVersion: fn.kpt.dev/v1alpha1
 kind: ApplyReplacements
 metadata:
@@ -15,10 +17,10 @@ replacements:
     targets:
       - select:
           kind: NetworkAttachmentDefinition
-          annotations:
-            specializer.nephio.org/owner: req.nephio.org/v1alpha1.Interface.n2
+          name: amf-core-n2
         fieldPaths:
           - spec.config
         options:
           delimiter: '"master":"'
           index: 1
+
